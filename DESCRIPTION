@@ -1,0 +1,23 @@
+Package: DirectRepeateR
+Type: Package
+Title: Annotate Direct Repeats in Genome Assemblies
+Version: 1.0.0
+Authors@R: c(person("Megan", "Copeland", role = c("aut"), 
+            email = "mcc146@tamu.edu"),
+            person("Heath", "Blackmon", role = c("aut", "cre"), 
+            email = "coleoguy@gmail.com"))
+Maintainer: Heath Blackmon <coleoguy@gmail.com>
+Description: RepeatFinder is a package for identifying and visualizing direct repeat sequences 
+ in genome assemblies. Operating de novo, this package detects repeat sequences without 
+ prior information, requiring only a genome assembly in FASTA format. It outputs detailed 
+ locations of these repeats within the genome and provides tools for visualizing repeat 
+ density across chromosomes, facilitating the analysis of genomic repeat patterns.
+License: GPL (>= 2)
+LazyData: true
+Depends: 
+    seqinr,
+    data.table,
+    ggplot2,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
