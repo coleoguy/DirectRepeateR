@@ -4,7 +4,7 @@ DirectRepeateR is a collection of functions that are designed to help characteri
 
 **Installation**
 
-EvobiR can be installed using devtools to install from GitHub.
+DirectRepeateR can be installed using devtools to install from GitHub.
 
 `library(devtools)`
 
