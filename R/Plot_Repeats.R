@@ -1,4 +1,4 @@
-PlotRepeats <- function(final_output, window_size = NULL, step_size = NULL) {
+PlotRepeats <- function(data, window_size = NULL, step_size = NULL) {
 
   # Set default values if parameters are NULL
   if (is.null(window_size)) {
@@ -9,12 +9,12 @@ PlotRepeats <- function(final_output, window_size = NULL, step_size = NULL) {
   }
   
   # Get unique chromosome names
-  chr_names <- unique(final_output$Chromosome)
+  chr_names <- unique(data$Chromosome)
   
   # Process each chromosome and generate a plot
   for (chr in chr_names) {
     # Subset data for the current chromosome
-    chr_data <- subset(final_output, Chromosome == chr)
+    chr_data <- subset(data, Chromosome == chr)
     
     # Get max positional value (as a proxy for chromosome length)
     chr_length <- max(c(chr_data$End_Position, chr_data$Match_End_Position))

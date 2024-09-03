@@ -17,19 +17,18 @@ GetRepeats(file, query_length = NULL, maxdist = NULL, minlength = NULL)
   \item{query_length}{
     An integer specifying the length of the query sequence used to search 
     for direct repeats. The genome sequence is segmented into subsequences 
-    of this length to identify repeated patterns. Default is \code{NULL}, 
-    which uses 25.
+    of this length to identify repeated patterns. Default is \code{25}.
   }
   \item{maxdist}{
     An integer specifying the maximum distance between repeat copies 
     within which the function will search for direct repeats. This sets 
     a limit on how far apart repeat sequences can be to be considered 
-    related. Default is \code{NULL}, which uses 20,000.
+    related. Default is \code{20000}.
   }
   \item{minlength}{
     An integer specifying the minimum length of sequences to be considered 
-    as direct repeats. Only repeats of this length or longer will be detected. 
-    Default is \code{NULL}, which uses 25.
+    as direct repeats. Only repeats of this length or longer will be detected.
+    Default is \code{25}.
   }
 }
 \value{
@@ -48,11 +47,10 @@ GetRepeats(file, query_length = NULL, maxdist = NULL, minlength = NULL)
   Megan Copeland, Heath Blackmon
 }
 \references{
-  \url{https://your-reference-url-here}
+  \url{https://github.com/coleoguy/DirectRepeateR}
 }
 \examples{
-\dontrun{
-GetRepeats(file = "PATH/TO/genome.fa", query_length = 25, maxdist = 20000, minlength = 50)
-}
+# The following code is an example, but it is commented out to prevent execution.
+# GetRepeats("genome.fa", query_length = 25, maxdist = 20000, minlength = 50)
 }
 \keyword{direct repeats}
