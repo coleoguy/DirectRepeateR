@@ -2,10 +2,10 @@ PlotRepeats <- function(data, window_size = NULL, step_size = NULL) {
 
   # Set default values if parameters are NULL
   if (is.null(window_size)) {
-    window_size <- 200000
+    window_size <- 20000
   }
   if (is.null(step_size)) {
-    step_size <- 200000
+    step_size <- 20000
   }
   
   # Get unique chromosome names
@@ -40,7 +40,7 @@ PlotRepeats <- function(data, window_size = NULL, step_size = NULL) {
     
     # Create the ggplot object
     ggplot_object <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
-      geom_line(color = "blue") +
+      geom_line(color = "black") +
       labs(x = "Position on Chromosome", y = "Number of Repeats", 
            title = paste("Number of Repeats for", chr)) +
       theme_minimal() +
