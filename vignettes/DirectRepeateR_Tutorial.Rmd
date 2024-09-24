@@ -1,6 +1,6 @@
 ---
 title: "DirectRepeateR Tutorial"
-author: "Megan Copeland, Heath Blackmon"
+author: "Megan Copeland and Heath Blackmon"
 date: "Last updated: `r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -14,7 +14,7 @@ vignette: >
 
 ## Introduction
 
-The `DirectRepeateR` package is designed to identify, condense, and visualize direct repeat sequences within genome assemblies. This vignette provides a comprehensive guide to using the core functions of the package, including `GetRepeats` for repeat detection and `PlotRepeats` for visualization.
+The `DirectRepeateR` package is designed to identify, annotate, and visualize direct repeat sequences within genome assemblies. This vignette provides a comprehensive guide to using the core functions of the package: `GetRepeats`, `ConvertToGFF`, and `PlotRepeats`.
 
 ## Installing DirectRepeateR
 
@@ -34,7 +34,8 @@ The `GetRepeats` function searches for and stores the locations of direct repeat
 ### Example Usage
 
 ```r
-results <- GetRepeats(file = "PATH/TO/genome.fa", query_length = 25, maxdist = 20000, minlength = 50)
+path <- "PATH/TO/genome.fa"
+results <- GetRepeats(file = path, query_length = 25, maxdist = 20000, minlength = 50)
 ```
 
 ### Parameters
