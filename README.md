@@ -14,4 +14,4 @@ DirectRepeateR can be installed using devtools to install from GitHub.
 
 **Help**
 
-if you have questions or problems please let me know mcc146@tamu.edu.
+If you have questions or problems, please let me know mcc146@tamu.edu.
