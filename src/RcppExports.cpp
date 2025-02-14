@@ -18,13 +18,16 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 // Hard-coded outdir = "chromosome_results", no user option. void run_combined_cpp(const std::string& fasta_path, int query_length, int maxdist);
 RcppExport SEXP _DirectRepeateR_run_combined_cpp(SEXP fasta_pathSEXP, SEXP query_lengthSEXP, SEXP maxdistSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type fasta_path(fasta_pathSEXP);
     Rcpp::traits::input_parameter< int >::type query_length(query_lengthSEXP);
     Rcpp::traits::input_parameter< int >::type maxdist(maxdistSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_combined_cpp(fasta_path, query_length, maxdist));
-    return rcpp_result_gen;
+
+    // Correct: Call the function without wrapping since it is void
+    run_combined_cpp(fasta_path, query_length, maxdist);
+
+    // Correct: Explicitly return NULL to R since run_combined_cpp is void
+    return R_NilValue;
 END_RCPP
 }
 
