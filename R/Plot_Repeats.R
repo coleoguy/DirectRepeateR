@@ -1,4 +1,4 @@
-PlotRepeatsRollingAverage <- function(
+PlotRepeats <- function(
     data,
     window_size    = 200000,  # Size of each bin (bp)
     step_size      = 200000,  # Step between bin starts (bp)
