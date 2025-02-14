@@ -1,4 +1,5 @@
 exportPattern("^[[:alpha:]]+")
+useDynLib(DirectRepeateR, .registration = TRUE)
 export(GetRepeats)
 export(PlotRepeats)
 export(run_combined_cpp)
