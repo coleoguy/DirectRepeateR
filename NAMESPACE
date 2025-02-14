@@ -1,6 +1,7 @@
 exportPattern("^[[:alpha:]]+")
 export(GetRepeats)
 export(PlotRepeats)
+export(run_combined_cpp)
 
 import(Rcpp)
 import(data.table)
