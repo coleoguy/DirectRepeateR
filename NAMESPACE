@@ -2,6 +2,7 @@ exportPattern("^[[:alpha:]]+")
 export(GetRepeats)
 export(PlotRepeats)
 export(run_combined_cpp)
+export(ConvertToGFF)
 
 import(Rcpp, sourceCpp)
 import(data.table)
