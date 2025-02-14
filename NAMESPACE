@@ -3,7 +3,7 @@ export(GetRepeats)
 export(PlotRepeats)
 export(run_combined_cpp)
 
-import(Rcpp)
+import(Rcpp, sourceCpp)
 import(data.table)
 import(zoo)
 importFrom(ggplot2, "ggplot", "aes", "geom_line", "labs", "theme_minimal", "theme", "element_text", "element_line", "element_blank")
