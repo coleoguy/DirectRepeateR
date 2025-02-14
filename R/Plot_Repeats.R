@@ -4,10 +4,7 @@ PlotRepeatsRollingAverage <- function(
     step_size      = 200000,  # Step between bin starts (bp)
     rolling_window = 5        # Number of bins in the rolling average
 ) {
-  # Load libraries (or ensure they are loaded in your session)
-  library(ggplot2)
-  library(zoo)  # for rollmean()
-  
+
   # Get the list of unique chromosomes
   chr_names <- unique(data$Chromosome)
   
