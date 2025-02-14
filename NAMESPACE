@@ -1,4 +1,3 @@
-useDynLib(DirectRepeateR, .registration = TRUE)
 exportPattern("^[[:alpha:]]+")
 export(GetRepeats)
 export(PlotRepeats)
