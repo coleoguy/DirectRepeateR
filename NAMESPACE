@@ -5,7 +5,7 @@ export(PlotRepeats)
 export(run_combined_cpp)
 export(ConvertToGFF)
 
-import(Rcpp, sourceCpp)
+import(Rcpp)
 import(data.table)
 import(zoo)
 importFrom(ggplot2, "ggplot", "aes", "geom_line", "labs", "theme_minimal", "theme", "element_text", "element_line", "element_blank")
