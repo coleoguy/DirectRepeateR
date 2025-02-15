@@ -64,14 +64,27 @@ GetRepeats <- function(file,
     return(data.table::data.table())
   }
   
-  # 3) Read files, compute length for filtering, then remove it
+  # 3) Read files, extract chromosome name, and filter repeats
   list_of_dt <- lapply(condensed_files, function(csv_file) {
     dt <- data.table::fread(csv_file)
-    data.table::setorder(dt, Start_Position, Match_Position)
-    dt[, temp_length := (End_Position - Start_Position) + 1]  # for filtering
+    
+    # Extract chromosome name from filename
+    chrom_name <- sub("_condensed\\.csv$", "", basename(csv_file)) # Remove suffix
+    
+    # Add Chromosome column as the first column
+    dt[, Chromosome := chrom_name]
+    setcolorder(dt, c("Chromosome", colnames(dt)[colnames(dt) != "Chromosome"]))
+    
+    # Compute length for filtering
+    dt[, temp_length := (End_Position - Start_Position) + 1]
+    
+    # Filter out short repeats
     dt <- dt[temp_length >= minlength]
-    dt[, temp_length := NULL]  # remove before returning
-    dt
+    
+    # Remove temporary length column
+    dt[, temp_length := NULL]
+    
+    return(dt)
   })
   
   # 4) Merge into one data.table
