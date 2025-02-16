@@ -43,16 +43,14 @@ GetRepeats <- function(file,
                        minlength    = 50,
                        merged_csv   = "merged_results.csv") {
   
-  library(data.table)  # Use data.table for efficiency
-  
-  # 1) Run the C++ routine to generate per-chromosome CSVs
+  # 1) Calls the C++ routine, which writes per-chromosome CSV files
   run_combined_cpp(
-    fasta_path   = file,  # Replace with your actual FASTA file path
+    fasta_path   = file,  # Use file argument instead of hardcoding
     query_length = query_length,
     maxdist      = maxdist
   )
-
-  # 2) Collect all "_condensed.csv" files from "chromosome_results"
+  
+  # 2) Collect the new "_condensed.csv" files from "chromosome_results"
   outdir <- "chromosome_results"
   condensed_files <- list.files(
     path       = outdir,
@@ -60,65 +58,45 @@ GetRepeats <- function(file,
     full.names = TRUE
   )
 
-  # Debug: Check if files are found
   if (length(condensed_files) == 0) {
-    stop("No condensed CSV files found in '", outdir, "'. Possibly no repeats identified.")
+    message("No condensed CSV files found in '", outdir, "'. Possibly no repeats identified.")
+    return(data.table::data.table())
   }
   
-  # 3) Function to process each file
-  process_csv <- function(csv_file) {
-    # Read CSV
-    df <- read.csv(csv_file, stringsAsFactors = FALSE)
+  # 3) Read files, extract chromosome name, sort, and filter
+  list_of_dt <- lapply(condensed_files, function(csv_file) {
+    dt <- data.table::fread(csv_file)
     
-    # Skip empty files
-    if (nrow(df) == 0) {
-      print(paste("Skipping empty file:", csv_file))
-      return(NULL)
-    }
-    
-    # Extract chromosome name from filename
-    chrom_name <- sub("_condensed\\.csv$", "", basename(csv_file))
-    
+    # Extract chromosome name
+    chrom_name <- sub("_condensed\\.csv$", "", basename(csv_file)) 
+
     # Add Chromosome column as the first column
-    df$Chromosome <- chrom_name
-    df <- df[, c(5, 1:4)]  # Reorder columns
+    dt[, Chromosome := chrom_name]
+    setcolorder(dt, c("Chromosome", setdiff(names(dt), "Chromosome")))
 
     # Sort by column 2 (Start_Position) then column 4 (Match_Position)
-    df <- df[order(df[[2]], df[[4]]), ]
-    
-    # Compute repeat length
-    df$Repeat_Length <- (df$End_Position - df$Start_Position) + 1
-    
-    # Apply filtering (keeping only repeats >= minlength)
-    df <- df[df$Repeat_Length >= minlength, ]
-    
-    # Remove temporary Repeat_Length column
-    df$Repeat_Length <- NULL
+    setorder(dt, Start_Position, Match_Position)
 
-    return(df)
+    # Compute length for filtering
+    dt[, temp_length := (End_Position - Start_Position) + 1]
+
+    # Filter out short repeats
+    dt <- dt[temp_length >= minlength]
+
+    # Remove temporary column
+    dt[, temp_length := NULL]
+
+    return(dt)
+  })
+
+  # 4) Merge into one data.table
+  merged_dt <- data.table::rbindlist(list_of_dt, use.names = TRUE, fill = TRUE)
+
+  # 5) Save merged results if requested
+  if (!is.null(merged_csv)) {
+    data.table::fwrite(merged_dt, merged_csv)
   }
 
-  # 4) Process all files
-  list_of_dfs <- lapply(condensed_files, process_csv)
-
-  # Remove NULL elements (empty files)
-  list_of_dfs <- Filter(Negate(is.null), list_of_dfs)
-
-  # 5) Merge all filtered data frames
-  merged_df <- do.call(rbind, list_of_dfs)
-
-  # Debug: Print merged table preview
-  print("Merged data preview:")
-  print(head(merged_df))
-
-  # 6) Save merged results
-  write.csv(merged_df, merged_csv, row.names = FALSE)
-
-  # Debug: Confirm file saved
-  print(paste("Merged file saved as:", merged_csv))
-
-  return(merged_df)
+  # 6) Return the final data.table
+  return(merged_dt)
 }
-
-# Run the function
-merged_results <- GetRepeats()
