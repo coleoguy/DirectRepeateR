@@ -3,13 +3,12 @@
 \title{Visualization of Rolling-Average Repeat Counts Across Chromosomes}
 \description{
   The \code{PlotRepeats} function visualizes the distribution of direct 
-  repeats across chromosomes, using a sliding window and applying a rolling 
-  average to smooth out fluctuations. This function generates line plots 
-  showing the smoothed number of repeats within specified windows across 
+  repeats across chromosomes by generating line plots 
+  showing the  number of repeats within specified windows across 
   the length of each chromosome. This fucntion is designed to work with the merged data output from the GetRepeats function.
 }
 \usage{
-PlotRepeats(merged_csv, window_size = 200000, step_size = 200000, rolling_window = 5)
+PlotRepeats(merged_csv, window_size = 200000, step_size = 200000)
 }
 \arguments{
   \item{data}{
@@ -25,15 +24,10 @@ PlotRepeats(merged_csv, window_size = 200000, step_size = 200000, rolling_window
     An integer specifying the step size (in base pairs) between consecutive 
     bins. Defaults to \code{200000}.
   }
-  \item{rolling_window}{
-    An integer specifying the number of bins over which to compute a rolling 
-    average. Defaults to \code{5}, meaning each bin is averaged with the 2 
-    bins on either side, if available.
-  }
 }
 \value{
   This function does not return an object. Instead, it produces one plot 
-  per chromosome, each showing the rolling-average repeat count across 
+  per chromosome, each showing repeat count in windows across 
   the chromosome's length.
 }
 \author{
@@ -45,7 +39,7 @@ PlotRepeats(merged_csv, window_size = 200000, step_size = 200000, rolling_window
 \examples{
 # The following code is an example, commented out to prevent execution:
 # final_output <- GetRepeats(some_genome_data)
-# PlotRepeats(data = merged_csv, window_size = 200000, step_size = 200000, rolling_window = 5)
+# PlotRepeats(data = merged_csv, window_size = 200000, step_size = 200000)
 }
 
 \keyword{visualization}

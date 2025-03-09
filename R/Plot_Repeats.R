@@ -1,10 +1,8 @@
 PlotRepeats <- function(
     data,
-    window_size    = 200000,  # Size of each bin (bp)
-    step_size      = 200000,  # Step between bin starts (bp)
-    rolling_window = 5        # Number of bins in the rolling average
+    window_size = 200000,  # Size of each bin (bp)
+    step_size   = 200000   # Step between bin starts (bp)
 ) {
-
   # Get the list of unique chromosomes
   chr_names <- unique(data$Chromosome)
   
@@ -35,27 +33,18 @@ PlotRepeats <- function(
       Chromosome   = chr
     )
     
-    # Compute rolling average (centered, ignoring edges)
-    # If rolling_window = 5, each point becomes the average of ±2 neighbors
-    results_df$Rolling_Avg <- zoo::rollmean(
-      results_df$Repeat_Count,
-      k     = rolling_window,
-      fill  = NA,   # or "extend" if you want to avoid NA at edges
-      align = "center"
-    )
-    
-    # Build the plot
-    p <- ggplot(results_df, aes(x = Window_Start, y = Rolling_Avg)) +
+    # Build the plot (no rolling average)
+    p <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
       geom_line(color = "blue", size = 1) +
       geom_ribbon(
-        aes(ymin = 0, ymax = Rolling_Avg),
+        aes(ymin = 0, ymax = Repeat_Count),
         fill  = "lightblue",
         alpha = 0.4
       ) +
       labs(
         title = paste("Chromosome:", chr),
         x     = "Genomic Position (binned)",
-        y     = "Rolling Average of Repeats"
+        y     = "Repeat Count"
       ) +
       theme_minimal()
     
