@@ -3,13 +3,13 @@ title: "DirectRepeateR Tutorial"
 author: "Megan Copeland, Andres Barboza, Heath Blackmon"
 date: 'Last updated: `r Sys.Date()`'
 output:
-  pdf_document: default
-  html_vignette:
-    fig_caption: true
-    toc: true
   html_document:
     toc: true
     df_print: paged
+  html_vignette:
+    fig_caption: true
+    toc: true
+  pdf_document: default
 vignette: "%\\VignetteIndexEntry{DirectRepeatR Tutorial} %\\VignetteEncoding{UTF-8}
   %\\VignetteEngine{knitr::rmarkdown}\n"
 ---
