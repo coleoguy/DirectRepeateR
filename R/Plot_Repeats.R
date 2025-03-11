@@ -34,7 +34,7 @@ PlotRepeats <- function(
     )
     
     # Build the plot (no rolling average)
-   p <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
+  p <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
   geom_line(color = "blue", size = 1) +
   geom_ribbon(aes(ymin = 0, ymax = Repeat_Count), fill = "lightblue", alpha = 0.4) +
   labs(
@@ -44,11 +44,12 @@ PlotRepeats <- function(
   ) +
   theme_minimal() +
   theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    axis.line = element_line(color = "black")
-  )
-    
+    panel.grid.major     = element_blank(),
+    panel.grid.minor     = element_blank(),
+    axis.line          = element_line(color = "black"),
+    axis.ticks         = element_line(color = "black"),
+    axis.ticks.length  = unit(0.2, "cm")  # Adjust tick length as needed
+  ) 
     # Display the plot for the current chromosome
     print(p)
   }
