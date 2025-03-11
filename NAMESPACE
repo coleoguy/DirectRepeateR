@@ -7,7 +7,7 @@ export(ConvertToGFF)
 
 import(Rcpp)
 import(data.table)
-importFrom(ggplot2, "ggplot", "aes", "geom_line", "labs", "theme_minimal", "theme", "element_text", "element_line", "element_blank")
+importFrom(ggplot2, "ggplot", "aes", "geom_line", "geom_ribbon", "labs", "theme_minimal", "theme", "element_text", "element_line", "element_blank")
 importFrom(utils, "read.csv", "write.csv", "write.table")
 importFrom(knitr, "knit")
 import(rmarkdown)
