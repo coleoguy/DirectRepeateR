@@ -34,19 +34,20 @@ PlotRepeats <- function(
     )
     
     # Build the plot (no rolling average)
-    p <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
-      geom_line(color = "blue", size = 1) +
-      geom_ribbon(
-        aes(ymin = 0, ymax = Repeat_Count),
-        fill  = "lightblue",
-        alpha = 0.4
-      ) +
-      labs(
-        title = paste("Chromosome:", chr),
-        x     = "Genomic Position (binned)",
-        y     = "Repeat Count"
-      ) +
-      theme_minimal()
+   p <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
+  geom_line(color = "blue", size = 1) +
+  geom_ribbon(aes(ymin = 0, ymax = Repeat_Count), fill = "lightblue", alpha = 0.4) +
+  labs(
+    title = paste("Chromosome:", chr),
+    x     = "Genomic Position (binned)",
+    y     = "Repeat Count"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line = element_line(color = "black")
+  )
     
     # Display the plot for the current chromosome
     print(p)
