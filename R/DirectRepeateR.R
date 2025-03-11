@@ -18,10 +18,10 @@
 #'
 #' @return A `data.table` with columns:
 #'   \itemize{
-#'     \item Start_Position
-#'     \item End_Position
-#'     \item Match_Position
-#'     \item Match_End_Position
+#'     \item Start
+#'     \item End
+#'     \item Match_Start
+#'     \item Match_End
 #'   }
 #'
 #' @export
@@ -74,11 +74,11 @@ GetRepeats <- function(file,
     dt[, Chromosome := chrom_name]
     setcolorder(dt, c("Chromosome", setdiff(names(dt), "Chromosome")))
 
-    # Sort by column 2 (Start_Position) then column 4 (Match_Position)
-    setorder(dt, Start_Position, Match_Position)
+    # Sort by column 2 (Start) then column 4 (Match_Start)
+    setorder(dt, Start, Match_Start)
 
     # Compute length for filtering
-    dt[, temp_length := (End_Position - Start_Position) + 1]
+    dt[, temp_length := (End - Start) + 1]
 
     # Filter out short repeats
     dt <- dt[temp_length >= minlength]

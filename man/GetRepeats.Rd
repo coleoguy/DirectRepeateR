@@ -3,8 +3,8 @@
 \title{Detection of Direct Repeats in Genome Assemblies}
 \description{
   The \code{GetRepeats} function calls a compiled C++ routine (via \pkg{Rcpp}) 
-  to detect direct repeats in a FASTA file. It stores per-chromosome 
-  "_condensed.csv" files in the directory \code{"chromosome_results"}, then merges 
+  to detect direct repeats in a FASTA file. It stores chromosomal CSV  
+  files in the directory \code{"chromosome_results"}, then merges 
   and filters them, returning a combined table of repeat locations.
 }
 \usage{
@@ -41,13 +41,13 @@ GetRepeats(
 \value{
   A \code{data.table} with the following columns:
   \describe{
-    \item{Start_Position}{Start position of the first occurrence of the repeat.}
-    \item{End_Position}{End position of the first occurrence of the repeat.}
-    \item{Match_Position}{Start position of the matching repeat copy.}
-    \item{Match_End_Position}{End position of the matching repeat copy.}
+    \item{Start}{Start position of the first occurrence of the repeat.}
+    \item{End}{End position of the first occurrence of the repeat.}
+    \item{Match_Start}{Start position of the matching repeat copy.}
+    \item{Match_End}{End position of the matching repeat copy.}
   }
   
-  The per-chromosome intermediate files are written to a folder named 
+  The chromosomal intermediate CSV files are written to a folder named 
   \code{"chromosome_results"} in the working directory.
 }
 \author{

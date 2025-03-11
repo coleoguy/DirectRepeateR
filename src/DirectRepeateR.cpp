@@ -216,7 +216,7 @@ void processSingleChrom(const std::string &chromName,
   }
   
   // Write header
-  outfile << "Start_Position,End_Position,Match_Position,Match_End_Position\n";
+  outfile << "Start,End,Match_Start,Match_End\n";
   for (const auto &kv : condensed_map) {
     const Condensed &row = kv.second;
     outfile << row.startPos    << ","

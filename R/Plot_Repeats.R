@@ -12,11 +12,11 @@ PlotRepeats <- function(
     chr_data <- subset(data, Chromosome == chr)
     
     # Determine the chromosome length
-    chr_length <- max(c(chr_data$End_Position, chr_data$Match_End_Position))
+    chr_length <- max(c(chr_data$End, chr_data$Match_End))
     
     # Calculate midpoint of each repeat
-    repeat_midpoints <- ((chr_data$Start_Position + chr_data$End_Position) / 2 +
-                           (chr_data$Match_Position + chr_data$Match_End_Position) / 2) / 2
+    repeat_midpoints <- ((chr_data$Start + chr_data$End) / 2 +
+                           (chr_data$Match_Start + chr_data$Match_End) / 2) / 2
     
     # Define bin starts
     windows <- seq(1, chr_length, by = step_size)

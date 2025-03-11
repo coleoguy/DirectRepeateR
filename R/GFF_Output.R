@@ -15,13 +15,13 @@ ConvertToGFF <- function(data) {
     # Generate ID for the repeat
     repeat_id <- paste0("Repeat_", i)
     
-    # Full length of the repeat (Start_Position of first copy to Match_End_Position of second copy)
+    # Full length of the repeat (Start of first copy to End of second copy)
     gff_list[[length(gff_list) + 1]] <- data.frame(
       Chromosome = row$Chromosome,
       Source = "GetRepeats",
       Feature = "repeat_region",
-      Start = row$Start_Position,
-      End = row$Match_End_Position,
+      Start = row$Start,
+      End = row$Match_End,
       Attributes = paste0("ID=", repeat_id),
       stringsAsFactors = FALSE
     )
@@ -31,8 +31,8 @@ ConvertToGFF <- function(data) {
       Chromosome = row$Chromosome,
       Source = "GetRepeats",
       Feature = "repeat_copy",
-      Start = row$Start_Position,
-      End = row$End_Position,
+      Start = row$Start,
+      End = row$End,
       Attributes = paste0("Parent=", repeat_id, ";Copy=1"),
       stringsAsFactors = FALSE
     )
@@ -42,8 +42,8 @@ ConvertToGFF <- function(data) {
       Chromosome = row$Chromosome,
       Source = "GetRepeats",
       Feature = "repeat_copy",
-      Start = row$Match_Position,
-      End = row$Match_End_Position,
+      Start = row$Match_Start,
+      End = row$Match_End,
       Attributes = paste0("Parent=", repeat_id, ";Copy=2"),
       stringsAsFactors = FALSE
     )

@@ -12,8 +12,8 @@ PlotRepeats(merged_csv, window_size = 200000, step_size = 200000)
 }
 \arguments{
   \item{data}{
-    A data frame containing columns \code{Chromosome}, \code{Start_Position}, 
-    \code{End_Position}, \code{Match_Position}, and \code{Match_End_Position}, 
+    A data frame containing columns \code{Chromosome}, \code{Start}, 
+    \code{End}, \code{Match_Start}, and \code{Match_End}, 
     detailing the locations of direct repeats within a genome assembly.
   }
   \item{window_size}{

@@ -28,6 +28,7 @@ install_github("coleoguy/DirectRepeateR",
                 build_vignettes = TRUE)
                 library(DirectRepeateR)
 ```
+Direct repeats are identical DNA sequences oriented in the same direction and occur in realtively close proximity within a genome. These repeats are significant due to their involvement in genome stability/instability. For example, direct repeats play are the foundation of the single-strand annealing (SSA) DNA repair pathway. This pathway repairs double-strand DNA breaks by annealing complementary direct repeats, leading to the deletion of DNA intervening between the repeats. As such, direct repeats can profoundly influence genomic integrity, gene function, and evolutionary processes. Despite this biological importance, direct repeats are understudied compared to other repeat types, partly due to a lack of targeted annotation tools—highlighting the need for specialized methods, like DirectRepeateR, for their accurate detection and annotation.
 
 ## GetRepeats Function
 
@@ -57,18 +58,18 @@ results <- GetRepeats(
 ### Output
 The intermediate chromosome CSV files will be saved out to the chromosome_results folder. These files will be named according to the sequence that those results correspond to and will have four columns:
 
-1. **Start_Position**: Start position of the first occurrence of the repeat.
-2. **End_Position**: End position of the first occurrence of the repeat.
-3. **Match_Position**: Start position of the second occurrence of the repeat (the repeat copy).
-4. **Match_End_Position**: End position of the second occurrence of the repeat (the repeat copy).
+1. **Start**: Start position of the first occurrence of the repeat.
+2. **End**: End position of the first occurrence of the repeat.
+3. **Match_Start**: Start position of the second occurrence of the repeat (the repeat copy).
+4. **Match_End**: End position of the second occurrence of the repeat (the repeat copy).
 
 The final, merged output .csv file will be saved out as specified in the parameters. If not specified, it will be saved in your working directory. This file will have a five column format:
 
 1. **Chromosome**: Chromosomal location of the repeat.
-1. **Start_Position**: Start position of the first occurrence of the repeat.
-2. **End_Position**: End position of the first occurrence of the repeat.
-3. **Match_Position**: Start position of the second occurrence of the repeat (the repeat copy).
-4. **Match_End_Position**: End position of the second occurrence of the repeat (the repeat copy).
+1. **Start**: Start position of the first occurrence of the repeat.
+2. **End**: End position of the first occurrence of the repeat.
+3. **Match_Start**: Start position of the second occurrence of the repeat (the repeat copy).
+4. **Match_End**: End position of the second occurrence of the repeat (the repeat copy).
 
 ## ConvertToGFF Function
 
