@@ -3,20 +3,22 @@ title: "DirectRepeateR Tutorial"
 author: "Megan Copeland, Andres Barboza, Heath Blackmon"
 date: 'Last updated: `r Sys.Date()`'
 output:
-  html_document:
-    toc: true
-    df_print: paged
+  pdf_document: default
   html_vignette:
     fig_caption: true
     toc: true
-  pdf_document: default
+  html_document:
+    toc: true
+    df_print: paged
 vignette: "%\\VignetteIndexEntry{DirectRepeatR Tutorial} %\\VignetteEncoding{UTF-8}
   %\\VignetteEngine{knitr::rmarkdown}\n"
 ---
 
 ## Introduction
 
-The `DirectRepeateR` package is designed to identify, annotate, and visualize direct repeat sequences within genome assemblies. This vignette provides a comprehensive guide to using the core functions of the package, including `GetRepeats` for repeat detection and `PlotRepeats` for visualization.
+The `DirectRepeateR` package is designed to identify, annotate, and visualize direct repeat sequences within genome assemblies. This vignette provides a comprehensive guide to using the core functions of the package, including `GetRepeats` for repeat detection, `ConvertToGFF` for annotation, and `PlotRepeats` for visualization.
+
+Direct repeats are identical DNA sequences oriented in the same direction and occur in relatively close proximity within a genome. These repeats are significant due to their involvement in genome stability/instability. For example, direct repeats play a crucial role in the single-strand annealing (SSA) DNA repair pathway, which repairs double-strand DNA breaks by annealing complementary direct repeats, leading to the deletion of DNA between the repeats. As such, direct repeats profoundly influence genomic integrity, gene function, and evolutionary processes. Despite their biological importance, direct repeats are understudied compared to other repeat types, partly due to a lack of targeted annotation tools—highlighting the need for specialized methods like `DirectRepeateR`.
 
 ## Installing DirectRepeateR
 
@@ -24,31 +26,30 @@ You can install the most recent version of `DirectRepeateR` from GitHub using th
 
 ```r
 library(devtools)
-install_github("coleoguy/DirectRepeateR",
-                build_vignettes = TRUE)
-                library(DirectRepeateR)
+install_github("coleoguy/DirectRepeateR", build_vignettes = TRUE)
+library(DirectRepeateR)
 ```
-Direct repeats are identical DNA sequences oriented in the same direction and occur in realtively close proximity within a genome. These repeats are significant due to their involvement in genome stability/instability. For example, direct repeats play are the foundation of the single-strand annealing (SSA) DNA repair pathway. This pathway repairs double-strand DNA breaks by annealing complementary direct repeats, leading to the deletion of DNA intervening between the repeats. As such, direct repeats can profoundly influence genomic integrity, gene function, and evolutionary processes. Despite this biological importance, direct repeats are understudied compared to other repeat types, partly due to a lack of targeted annotation tools—highlighting the need for specialized methods, like DirectRepeateR, for their accurate detection and annotation.
 
-## GetRepeats Function
+## Example: Detecting, Converting, and Plotting Repeats
+
+In this example, we demonstrate how to use the core functions using a FASTA file stored in the package's `extdata` directory.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = TRUE,
+  fig.width = 7,
+  fig.height = 5
+)
+library(DirectRepeateR)
+```
+
+### Running GetRepeats
 
 The GetRepeats() function searches for direct repeats in a FASTA file by calling a compiled C++ routine. It writes CSV files for each chromosome into the chromosome_results folder. It then merges these files into a single table, filtering out repeats below a specified minimum length. There is option to specify the path where you can save out the merged results.
 
-### Example Usage
-
-```r
-results <- GetRepeats(
-  file         = "PATH/TO/genome.fa",
-  query_length = 25, 
-  maxdist      = 20000, 
-  minlength    = 50,
-  merged_csv   = "merged_results.csv"
-)
-
-```
-
 ### Parameters
-
 - **file**: A character string specifying the path to the genome assembly file in FASTA format. We recommend using a FASTA file that has been filtered to remove all small, unplaced contigs/scaffolds.
 - **query_length**: An integer specifying the length of the query sequence used to search for direct repeats. The genome sequence is segmented into subsequences of this length to identify repeated patterns. Default is 25 if not specified.
 - **maxdist**: An integer specifying the maximum distance between repeat copies within which the function will search for direct repeats. This sets a limit on how far apart the repeated sequences can be. Default is 20000 if not specified.
@@ -58,41 +59,61 @@ results <- GetRepeats(
 ### Output
 The intermediate chromosome CSV files will be saved out to the chromosome_results folder. These files will be named according to the sequence that those results correspond to and will have four columns:
 
-1. **Start**: Start position of the first occurrence of the repeat.
-2. **End**: End position of the first occurrence of the repeat.
-3. **Match_Start**: Start position of the second occurrence of the repeat (the repeat copy).
-4. **Match_End**: End position of the second occurrence of the repeat (the repeat copy).
+- **Start**: Start position of the first occurrence of the repeat.
+- **End**: End position of the first occurrence of the repeat.
+- **Match_Start**: Start position of the second occurrence of the repeat (the repeat copy).
+- **Match_End**: End position of the second occurrence of the repeat (the repeat copy).
 
 The final, merged output .csv file will be saved out as specified in the parameters. If not specified, it will be saved in your working directory. This file will have a five column format:
 
-1. **Chromosome**: Chromosomal location of the repeat.
-1. **Start**: Start position of the first occurrence of the repeat.
-2. **End**: End position of the first occurrence of the repeat.
-3. **Match_Start**: Start position of the second occurrence of the repeat (the repeat copy).
-4. **Match_End**: End position of the second occurrence of the repeat (the repeat copy).
+- **Chromosome**: Chromosomal location of the repeat.
+- **Start**: Start position of the first occurrence of the repeat.
+- **End**: End position of the first occurrence of the repeat.
+- **Match_Start**: Start position of the second occurrence of the repeat (the repeat copy).
+- **Match_End**: End position of the second occurrence of the repeat (the repeat copy).
+
+### Example Usage
+
+```{r getrepeats-example}
+# Run GetRepeats to identify direct repeats
+res <- GetRepeats(
+  file         = "../data/C_elegans_chr1.fasta",
+  query_length = 25,
+  maxdist      = 20000,
+  minlength    = 50,
+  merged_csv   = "C_elegans_results.csv"  # Save results in data folder
+)
+
+# Display the first 25 rows
+head(res, n = 25)
+```
 
 ## ConvertToGFF Function
 
 The `ConvertToGFF` function is designed to convert the output from `GetRepeats`function into a GFF (General Feature Format) file. The function processes each row of the final_output data frame, which contains location information for the detected repeat sequences, and generates three corresponding GFF entries: one for the full length of the repeat, representing the region from the start of the first copy to the end of the second copy; one for the first detected repeat copy; and one for the second detected repeat copy. The gff file is written out as a text file and saved in a results folder in the working directory.
 
-### Example Usage
-
-```r
-gff_output <- ConvertToGFF(data = merged_results)
-```
 ### Parameters
 
 - **data**: The merged results data frame generated by the `GetRepeats` function, containing details about the locations of direct repeats within a genome assembly.
 
-## PlotRepeats Function
+### Output
 
-The `PlotRepeats` function visualizes the density of direct repeats across chromosomes using a sliding window approach. This section explains how to use it and customize the visualization.
+The function generates a text file with the locations of all the repeats in GFF format. 
 
 ### Example Usage
 
-```r
-PlotRepeats(merged_results, window_size = 200000, step_size = 200000)
+```{r converttoGFF-example}
+# Convert the repeat results to GFF format
+GFF_res <- ConvertToGFF(data = res)
+
+# Display first 25 rows of GFF output
+head(GFF_res, n = 25)
 ```
+
+
+## PlotRepeats Function
+
+The `PlotRepeats` function visualizes the density of direct repeats across chromosomes using a sliding window approach. This section explains how to use it and customize the visualization.
 
 ### Parameters
 
@@ -103,6 +124,15 @@ PlotRepeats(merged_results, window_size = 200000, step_size = 200000)
 ### Output
 
 The function generates and displays line plots for each chromosome, showing a the number of repeats within each window along the chromosome's length.
+
+### Example Usage
+
+```{r plotrepeats-example}
+# Plot repeat density
+plot <- PlotRepeats(data = res, window_size = 200000, step_size = 200000)
+print(plot)
+```
+
 
 ## Conclusion
 
