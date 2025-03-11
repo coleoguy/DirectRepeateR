@@ -48,7 +48,7 @@ PlotRepeats <- function(
     panel.grid.minor     = element_blank(),
     axis.line          = element_line(color = "black"),
     axis.ticks         = element_line(color = "black"),
-    axis.ticks.length  = unit(0.2, "cm")  # Adjust tick length as needed
+    axis.ticks.length  = grid::unit(0.2, "cm")
   ) 
     # Display the plot for the current chromosome
     print(p)
