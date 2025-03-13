@@ -16,9 +16,9 @@ vignette: "%\\VignetteIndexEntry{DirectRepeatR Tutorial} %\\VignetteEncoding{UTF
 
 ## Introduction
 
-The `DirectRepeateR` package is designed to identify, annotate, and visualize direct repeat sequences within genome assemblies. This vignette provides a comprehensive guide to using the core functions of the package, including `GetRepeats` for repeat detection, `ConvertToGFF` for annotation, and `PlotRepeats` for visualization.
+The `DirectRepeateR` package is designed to identify, annotate, and visualize direct repeat sequences in genome assemblies. This vignette provides a comprehensive guide to using the core functions of the package, including `GetRepeats` for repeat detection, `ConvertToGFF` for annotation, and `PlotRepeats` for visualization.
 
-Direct repeats are identical DNA sequences oriented in the same direction and occur in relatively close proximity within a genome. These repeats are significant due to their involvement in genome stability/instability. For example, direct repeats play a crucial role in the single-strand annealing (SSA) DNA repair pathway, which repairs double-strand DNA breaks by annealing complementary direct repeats, leading to the deletion of DNA between the repeats. As such, direct repeats profoundly influence genomic integrity, gene function, and evolutionary processes. Despite their biological importance, direct repeats are understudied compared to other repeat types, partly due to a lack of targeted annotation tools—highlighting the need for specialized methods like `DirectRepeateR`.
+Direct repeats are identical DNA sequences oriented in the same direction and occur in relatively close proximity. These repeats are significant due to their involvement in genome stability/instability. For example, direct repeats play a crucial role in the single-strand annealing (SSA) DNA repair pathway, which repairs double-strand DNA breaks by annealing complementary direct repeats, leading to the deletion of DNA between the repeats. As such, direct repeats profoundly influence genomic integrity, gene function, and evolutionary processes. Despite their biological importance, direct repeats are understudied compared to other repeat types, partly due to a lack of targeted annotation tools—highlighting the need for specialized methods like `DirectRepeateR`.
 
 ## Installing DirectRepeateR
 
@@ -30,7 +30,7 @@ install_github("coleoguy/DirectRepeateR", build_vignettes = TRUE)
 library(DirectRepeateR)
 ```
 
-## Example: Detecting, Converting, and Plotting Repeats
+## Example: Detecting, Annotating, and Plotting Repeats
 
 In this example, we demonstrate how to use the core functions using a FASTA file stored in the package's `extdata` directory.
 
@@ -75,9 +75,14 @@ The final, merged output .csv file will be saved out as specified in the paramet
 ### Example Usage
 
 ```{r getrepeats-example}
+
+# Get path to fasta file
+file_path <- system.file("data", "C_elegans_chr1.fasta", package = "DirectRepeateR")
+
+
 # Run GetRepeats to identify direct repeats
 res <- GetRepeats(
-  file         = "../data/C_elegans_chr1.fasta",
+  file         = file_path,
   query_length = 25,
   maxdist      = 20000,
   minlength    = 50,
