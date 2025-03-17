@@ -1622,7 +1622,7 @@ display: none;
 
 <h1 class="title toc-ignore">DirectRepeateR Tutorial</h1>
 <h4 class="author">Megan Copeland, Andres Barboza, Heath Blackmon</h4>
-<h4 class="date">Last updated: 2025-03-11</h4>
+<h4 class="date">Last updated: 2025-03-17</h4>
 
 </div>
 
@@ -1630,8 +1630,8 @@ display: none;
 <ul>
 <li><a href="#introduction" id="toc-introduction">Introduction</a></li>
 <li><a href="#installing-directrepeater" id="toc-installing-directrepeater">Installing DirectRepeateR</a></li>
-<li><a href="#example-detecting-converting-and-plotting-repeats" id="toc-example-detecting-converting-and-plotting-repeats">Example:
-Detecting, Converting, and Plotting Repeats</a>
+<li><a href="#example-detecting-annotating-and-plotting-repeats" id="toc-example-detecting-annotating-and-plotting-repeats">Example:
+Detecting, Annotating, and Plotting Repeats</a>
 <ul>
 <li><a href="#running-getrepeats" id="toc-running-getrepeats">Running
 GetRepeats</a></li>
@@ -1661,23 +1661,23 @@ Usage</a></li>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>The <code>DirectRepeateR</code> package is designed to identify,
-annotate, and visualize direct repeat sequences within genome
-assemblies. This vignette provides a comprehensive guide to using the
-core functions of the package, including <code>GetRepeats</code> for
-repeat detection, <code>ConvertToGFF</code> for annotation, and
-<code>PlotRepeats</code> for visualization.</p>
+annotate, and visualize direct repeat sequences in genome assemblies.
+This vignette provides a comprehensive guide to using the core functions
+of the package, including <code>GetRepeats</code> for repeat detection,
+<code>ConvertToGFF</code> for annotation, and <code>PlotRepeats</code>
+for visualization.</p>
 <p>Direct repeats are identical DNA sequences oriented in the same
-direction and occur in relatively close proximity within a genome. These
-repeats are significant due to their involvement in genome
-stability/instability. For example, direct repeats play a crucial role
-in the single-strand annealing (SSA) DNA repair pathway, which repairs
-double-strand DNA breaks by annealing complementary direct repeats,
-leading to the deletion of DNA between the repeats. As such, direct
-repeats profoundly influence genomic integrity, gene function, and
-evolutionary processes. Despite their biological importance, direct
-repeats are understudied compared to other repeat types, partly due to a
-lack of targeted annotation tools—highlighting the need for specialized
-methods like <code>DirectRepeateR</code>.</p>
+direction and occur in relatively close proximity. These repeats are
+significant due to their involvement in genome stability/instability.
+For example, direct repeats play a crucial role in the single-strand
+annealing (SSA) DNA repair pathway, which repairs double-strand DNA
+breaks by annealing complementary direct repeats, leading to the
+deletion of DNA between the repeats. As such, direct repeats profoundly
+influence genomic integrity, gene function, and evolutionary processes.
+Despite their biological importance, direct repeats are understudied
+compared to other repeat types, partly due to a lack of targeted
+annotation tools—highlighting the need for specialized methods like
+<code>DirectRepeateR</code>.</p>
 </div>
 <div id="installing-directrepeater" class="section level2">
 <h2>Installing DirectRepeateR</h2>
@@ -1688,8 +1688,8 @@ package:</p>
 install_github(&quot;coleoguy/DirectRepeateR&quot;, build_vignettes = TRUE)
 library(DirectRepeateR)</code></pre>
 </div>
-<div id="example-detecting-converting-and-plotting-repeats" class="section level2">
-<h2>Example: Detecting, Converting, and Plotting Repeats</h2>
+<div id="example-detecting-annotating-and-plotting-repeats" class="section level2">
+<h2>Example: Detecting, Annotating, and Plotting Repeats</h2>
 <p>In this example, we demonstrate how to use the core functions using a
 FASTA file stored in the package’s <code>extdata</code> directory.</p>
 <div id="running-getrepeats" class="section level3">
@@ -1760,9 +1760,14 @@ the repeat (the repeat copy).</li>
 </div>
 <div id="example-usage" class="section level3">
 <h3>Example Usage</h3>
-<pre class="r"><code># Run GetRepeats to identify direct repeats
+<pre class="r"><code>
+# Get path to fasta file
+file_path &lt;- system.file(&quot;data&quot;, &quot;C_elegans_chr1.fasta&quot;, package = &quot;DirectRepeateR&quot;)
+
+
+# Run GetRepeats to identify direct repeats
 res &lt;- GetRepeats(
-  file         = &quot;../data/C_elegans_chr1.fasta&quot;,
+  file         = file_path,
   query_length = 25,
   maxdist      = 20000,
   minlength    = 50,
