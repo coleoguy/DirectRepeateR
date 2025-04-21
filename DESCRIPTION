@@ -5,8 +5,7 @@ Version: 1.0.0
 Authors@R: c(
     person("Megan",  "Copeland", role = c("aut"), email = "mcc146@tamu.edu"),
     person("Andres", "Barboza",  role = c("aut"), email = "andresdbp@tamu.edu"),
-    person("Heath",  "Blackmon", role = c("aut","cre"), email = "coleoguy@gmail.com")
-)
+    person("Heath",  "Blackmon", role = c("aut","cre"), email = "coleoguy@gmail.com"))
 Description: DirectRepeateR is a package for identifying and visualizing direct repeat sequences
  in genome assemblies. Operating de novo, this package detects repeat sequences without
  prior information, requiring only a genome assembly in FASTA format. It outputs detailed
