@@ -2,7 +2,8 @@ Package: DirectRepeateR
 Type: Package
 Title: Annotate Direct Repeats in Genome Assemblies
 Version: 1.0.0
-Authors@R: c(person("Megan",  "Copeland", role = c("aut"), email = "mcc146@tamu.edu"),
+Authors@R: c(
+    person("Megan",  "Copeland", role = c("aut"), email = "mcc146@tamu.edu"),
     person("Andres", "Barboza",  role = c("aut"), email = "andresdbp@tamu.edu"),
     person("Heath",  "Blackmon", role = c("aut","cre"), email = "coleoguy@gmail.com"))
 Description: DirectRepeateR is a package for identifying and visualizing direct repeat sequences
@@ -13,9 +14,12 @@ Description: DirectRepeateR is a package for identifying and visualizing direct 
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: Rcpp,
-    data.table,
-    ggplot2,
-    knitr,
-    rmarkdown
+Imports:
+   Rcpp,
+   data.table,
+   ggplot2
+Suggests:
+   knitr,
+   rmarkdown
+VignetteBuilder: knitr
 LinkingTo: Rcpp
