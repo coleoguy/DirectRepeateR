@@ -1,26 +1,26 @@
- Package: DirectRepeateR
- Type: Package
- Title: Annotate Direct Repeats in Genome Assemblies
- Version: 1.0.0
- Authors@R: c(
-     person("Megan",  "Copeland", role = c("aut"), email = "mcc146@tamu.edu"),
-     person("Andres", "Barboza",  role = c("aut"), email = "andresdbp@tamu.edu"),
-     person("Heath",  "Blackmon", role = c("aut","cre"), email = "coleoguy@gmail.com")
- )
- Description: DirectRepeateR is a package for identifying and visualizing direct repeat sequences
-  in genome assemblies. Operating de novo, this package detects repeat sequences without
-  prior information, requiring only a genome assembly in FASTA format. It outputs detailed
-  locations of these repeats within the genome and provides tools for visualizing repeat
-  density across chromosomes, facilitating the analysis of genomic repeat patterns.
- License: GPL (>= 2)
- Encoding: UTF-8
- LazyData: true
+Package: DirectRepeateR
+Type: Package
+Title: Annotate Direct Repeats in Genome Assemblies
+Version: 1.0.0
+Authors@R: c(
+    person("Megan",  "Copeland", role = c("aut"), email = "mcc146@tamu.edu"),
+    person("Andres", "Barboza",  role = c("aut"), email = "andresdbp@tamu.edu"),
+    person("Heath",  "Blackmon", role = c("aut","cre"), email = "coleoguy@gmail.com")
+)
+Description: DirectRepeateR is a package for identifying and visualizing direct repeat sequences
+ in genome assemblies. Operating de novo, this package detects repeat sequences without
+ prior information, requiring only a genome assembly in FASTA format. It outputs detailed
+ locations of these repeats within the genome and provides tools for visualizing repeat
+ density across chromosomes, facilitating the analysis of genomic repeat patterns.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
 Imports:
-    Rcpp,
-    data.table,
-    ggplot2
+   Rcpp,
+   data.table,
+   ggplot2
 Suggests:
-    knitr,
-    rmarkdown
+   knitr,
+   rmarkdown
 VignetteBuilder: knitr
 LinkingTo: Rcpp
