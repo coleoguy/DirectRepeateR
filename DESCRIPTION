@@ -11,7 +11,7 @@ Description: DirectRepeateR is a package for identifying and visualizing direct 
  prior information, requiring only a genome assembly in FASTA format. It outputs detailed
  locations of these repeats within the genome and provides tools for visualizing repeat
  density across chromosomes, facilitating the analysis of genomic repeat patterns.
-License: GPL (>= 2)
+License: MIT
 Encoding: UTF-8
 LazyData: true
 Imports:
