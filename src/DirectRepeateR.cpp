@@ -8,6 +8,9 @@
 #include <iostream>
 #include <limits>
 #include <string_view>
+#include <cctype>
+#include <cstring>
+#include <cstdint>
 
 #ifdef __GLIBC__
 #include <malloc.h>  // for malloc_trim() if using GNU C library
@@ -47,22 +50,48 @@ struct KeyHash {
 };
 
 // -----------------------------------------------------------------------------
-// Naive pattern matcher: returns all 1-based match positions of 'pattern'
-// in 'text'. Uses std::string_view to avoid copying large substrings.
+// Pattern matcher: returns all 1-based match positions of 'pattern'
+// in 'text'. For patterns of at least 8 characters, an unaligned 64-bit
+// load compares the first 8 bytes in a single instruction (DNA has a
+// 4-letter alphabet, so a one-byte prefilter hits every ~4 positions;
+// an 8-byte prefilter virtually never false-positives). The remainder
+// is verified with memcmp. Preserves the original semantics: 1-based
+// offsets, and the scan advances by the pattern length after each match.
 // -----------------------------------------------------------------------------
 std::vector<int> findMatchesFixed(std::string_view text, std::string_view pattern) {
   std::vector<int> positions;
-  if (pattern.empty() || text.empty()) return positions;
+  if (pattern.empty() || text.empty() || pattern.size() > text.size()) {
+    return positions;
+  }
   
-  size_t plen = pattern.size();
-  size_t tlen = text.size();
+  const size_t plen = pattern.size();
+  const char  *base = text.data();
+  const size_t last = text.size() - plen;  // last valid start offset
   
-  for (size_t i = 0; i + plen <= tlen; ) {
-    if (std::equal(pattern.begin(), pattern.end(), text.begin() + i)) {
-      positions.push_back(static_cast<int>(i + 1)); // 1-based
-      i += plen;  // Skip ahead by pattern length on a match
-    } else {
-      ++i;
+  if (plen >= 8) {
+    std::uint64_t pat8;
+    std::memcpy(&pat8, pattern.data(), 8);
+    const char  *ptail = pattern.data() + 8;
+    const size_t tlen  = plen - 8;
+    
+    for (size_t i = 0; i <= last; ) {
+      std::uint64_t txt8;
+      std::memcpy(&txt8, base + i, 8);  // safe: i + plen <= text.size()
+      if (txt8 == pat8 && std::memcmp(base + i + 8, ptail, tlen) == 0) {
+        positions.push_back(static_cast<int>(i + 1)); // 1-based
+        i += plen;  // Skip ahead by pattern length on a match
+      } else {
+        ++i;
+      }
+    }
+  } else {
+    for (size_t i = 0; i <= last; ) {
+      if (std::memcmp(base + i, pattern.data(), plen) == 0) {
+        positions.push_back(static_cast<int>(i + 1)); // 1-based
+        i += plen;
+      } else {
+        ++i;
+      }
     }
   }
   return positions;
@@ -71,11 +100,19 @@ std::vector<int> findMatchesFixed(std::string_view text, std::string_view patter
 // -----------------------------------------------------------------------------
 // Union-Find (Disjoint Set) helpers
 // -----------------------------------------------------------------------------
+// Iterative find with path compression (recursion could overflow the
+// stack on multi-Mb tandem arrays).
 int findRoot(std::vector<int> &parent, int x) {
-  if (parent[x] != x) {
-    parent[x] = findRoot(parent, parent[x]);
+  int root = x;
+  while (parent[root] != root) {
+    root = parent[root];
   }
-  return parent[x];
+  while (parent[x] != root) {
+    int next = parent[x];
+    parent[x] = root;
+    x = next;
+  }
+  return root;
 }
 
 void unionSets(std::vector<int> &parent, std::vector<int> &rank, int x, int y) {
@@ -102,6 +139,11 @@ void processSingleChrom(const std::string &chromName,
                         int maxdist,
                         const std::string &outdir)
 {
+  // Guard against int overflow on chromosomes > 2^31 - 1 bases
+  if (sequence.size() > static_cast<size_t>(std::numeric_limits<int>::max())) {
+    stop("Chromosome " + chromName +
+         " is longer than 2^31 - 1 bases, which is not currently supported.");
+  }
   int seq_length = static_cast<int>(sequence.size());
   if (seq_length < query_length) {
     Rcout << "Chromosome " << chromName 
@@ -125,6 +167,11 @@ void processSingleChrom(const std::string &chromName,
     if (search_len <= 0) continue;
     
     std::string_view pattern(sequence.data() + (start_pos - 1), query_length);
+    
+    // Skip chunks containing N (assembly gaps): N-runs would otherwise
+    // match each other and generate large false repeat blocks.
+    if (pattern.find('N') != std::string_view::npos) continue;
+    
     std::string_view search_field(sequence.data() + end_pos, search_len);
     
     std::vector<int> matches = findMatchesFixed(search_field, pattern);
@@ -211,8 +258,7 @@ void processSingleChrom(const std::string &chromName,
   std::string out_file = outdir + "/" + chromName + "_condensed.csv";
   std::ofstream outfile(out_file);
   if (!outfile.is_open()) {
-    Rcout << "Warning: cannot open output file: " << out_file << "\n";
-    return;
+    stop("Cannot open output file: " + out_file);
   }
   
   // Write header
@@ -242,6 +288,22 @@ void processSingleChrom(const std::string &chromName,
 }
 
 // -----------------------------------------------------------------------------
+// Sanitize a chromosome name so it can be used as a file name.
+// Replaces any character other than [A-Za-z0-9._-] with '_'.
+// (NCBI-style headers like ">gi|...|ref|NC_003279.8|" would otherwise
+// produce invalid file paths and be silently dropped.)
+// -----------------------------------------------------------------------------
+std::string sanitizeChromName(const std::string &name) {
+  std::string out = name;
+  for (char &c : out) {
+    bool ok = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+              (c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-';
+    if (!ok) c = '_';
+  }
+  return out;
+}
+
+// -----------------------------------------------------------------------------
 // Process the FASTA by chromosome
 // -----------------------------------------------------------------------------
 void processFastaByChrom(const std::string &fasta_path,
@@ -256,19 +318,21 @@ void processFastaByChrom(const std::string &fasta_path,
   
   std::string line;
   std::string current_chrom;
-  std::ostringstream seqbuf;
+  std::string seqbuf;
   
   while (std::getline(infile, line)) {
+    // Strip trailing carriage return from Windows (CRLF) files: it would
+    // otherwise corrupt matching and shift coordinates.
+    if (!line.empty() && line.back() == '\r') {
+      line.pop_back();
+    }
     if (line.empty()) continue;
     
     if (line[0] == '>') {
       if (!current_chrom.empty()) {
-        std::string chrom_sequence = seqbuf.str();
-        processSingleChrom(current_chrom, chrom_sequence, query_length, maxdist, outdir);
-        
-        // reset
-        std::ostringstream empty;
-        seqbuf.swap(empty);
+        processSingleChrom(current_chrom, seqbuf, query_length, maxdist, outdir);
+        seqbuf.clear();
+        seqbuf.shrink_to_fit();
       }
       // Extract name from header
       std::string header = line.substr(1);
@@ -276,19 +340,21 @@ void processFastaByChrom(const std::string &fasta_path,
       if (spacePos != std::string::npos) {
         header = header.substr(0, spacePos);
       }
-      current_chrom = header;
+      current_chrom = sanitizeChromName(header);
     } else {
-      seqbuf << line;
+      // Uppercase on read-in so soft-masked (lowercase) genomes are
+      // matched case-insensitively.
+      std::transform(line.begin(), line.end(), line.begin(),
+                     [](unsigned char ch) { return std::toupper(ch); });
+      seqbuf += line;
     }
   }
   
   // final chromosome
   if (!current_chrom.empty()) {
-    std::string chrom_sequence = seqbuf.str();
-    processSingleChrom(current_chrom, chrom_sequence, query_length, maxdist, outdir);
-    
-    std::ostringstream empty;
-    seqbuf.swap(empty);
+    processSingleChrom(current_chrom, seqbuf, query_length, maxdist, outdir);
+    seqbuf.clear();
+    seqbuf.shrink_to_fit();
   }
   
   infile.close();
@@ -300,19 +366,12 @@ void processFastaByChrom(const std::string &fasta_path,
 
 // -----------------------------------------------------------------------------
 // [[Rcpp::export]]
-// Hard-coded outdir = "chromosome_results", no user option.
 void run_combined_cpp(const std::string &fasta_path,
                       int query_length,
-                      int maxdist)
+                      int maxdist,
+                      const std::string &outdir)
 {
-  // We always store intermediate CSVs in "chromosome_results".
-  std::string outdir = "chromosome_results";
-  
-  // Create the folder if it does not exist (from C++)
-  // We can call R's directory creation function, or just rely on R to do it.
-  // We'll attempt to create it here for safety, using system calls or Rcpp 
-  // capabilities. But easiest is just to do in R code. 
-  // For a small cross-platform approach, let's call R's mkdir:
+  // Create the intermediate-results folder if it does not exist.
   Function dirCreate("dir.create");
   dirCreate(outdir, _["showWarnings"] = false, _["recursive"] = true);
   

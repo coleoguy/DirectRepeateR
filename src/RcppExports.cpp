@@ -5,7 +5,7 @@
 #include <string> 
 
 // Forward declaration for run_combined_cpp 
-void run_combined_cpp(const std::string &fasta_path, int query_length, int maxdist);
+void run_combined_cpp(const std::string &fasta_path, int query_length, int maxdist, const std::string &outdir);
 
 using namespace Rcpp;
 
@@ -15,24 +15,24 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // run_combined_cpp
-// Hard-coded outdir = "chromosome_results", no user option. void run_combined_cpp(const std::string& fasta_path, int query_length, int maxdist);
-RcppExport SEXP _DirectRepeateR_run_combined_cpp(SEXP fasta_pathSEXP, SEXP query_lengthSEXP, SEXP maxdistSEXP) {
+RcppExport SEXP _DirectRepeateR_run_combined_cpp(SEXP fasta_pathSEXP, SEXP query_lengthSEXP, SEXP maxdistSEXP, SEXP outdirSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type fasta_path(fasta_pathSEXP);
     Rcpp::traits::input_parameter< int >::type query_length(query_lengthSEXP);
     Rcpp::traits::input_parameter< int >::type maxdist(maxdistSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type outdir(outdirSEXP);
 
-    // Correct: Call the function without wrapping since it is void
-    run_combined_cpp(fasta_path, query_length, maxdist);
+    // Call the function without wrapping since it is void
+    run_combined_cpp(fasta_path, query_length, maxdist, outdir);
 
-    // Correct: Explicitly return NULL to R since run_combined_cpp is void
+    // Explicitly return NULL to R since run_combined_cpp is void
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_DirectRepeateR_run_combined_cpp", (DL_FUNC) &_DirectRepeateR_run_combined_cpp, 3},
+    {"_DirectRepeateR_run_combined_cpp", (DL_FUNC) &_DirectRepeateR_run_combined_cpp, 4},
     {NULL, NULL, 0}
 };
 

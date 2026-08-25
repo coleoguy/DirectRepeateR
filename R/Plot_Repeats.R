@@ -6,6 +6,9 @@ PlotRepeats <- function(
   # Get the list of unique chromosomes
   chr_names <- unique(data$Chromosome)
   
+  plots <- vector("list", length(chr_names))
+  names(plots) <- chr_names
+  
   # Loop through each chromosome
   for (chr in chr_names) {
     # Subset for the current chromosome
@@ -22,9 +25,21 @@ PlotRepeats <- function(
     windows <- seq(1, chr_length, by = step_size)
     
     # Count repeats in each bin
-    repeat_counts <- sapply(windows, function(w) {
-      sum(repeat_midpoints >= w & repeat_midpoints < (w + window_size))
-    })
+    if (window_size == step_size) {
+      # Non-overlapping bins: a single binning pass counts every midpoint
+      repeat_counts <- tabulate(
+        findInterval(repeat_midpoints, windows),
+        nbins = length(windows)
+      )
+    } else {
+      # Overlapping or gapped bins: count midpoints in [w, w + window_size)
+      # via two sorted lookups instead of one pass per window
+      sorted_mid <- sort(repeat_midpoints)
+      hi <- findInterval(windows + window_size, sorted_mid,
+                         left.open = TRUE)
+      lo <- findInterval(windows, sorted_mid, left.open = TRUE)
+      repeat_counts <- hi - lo
+    }
     
     # Create a data frame with the binned results
     results_df <- data.frame(
@@ -35,7 +50,7 @@ PlotRepeats <- function(
     
     # Build the plot (no rolling average)
   p <- ggplot(results_df, aes(x = Window_Start, y = Repeat_Count)) +
-  geom_line(color = "blue", size = 1) +
+  geom_line(color = "blue", linewidth = 1) +
   geom_ribbon(aes(ymin = 0, ymax = Repeat_Count), fill = "lightblue", alpha = 0.4) +
   labs(
     title = paste("Chromosome:", chr),
@@ -52,5 +67,9 @@ PlotRepeats <- function(
   ) 
     # Display the plot for the current chromosome
     print(p)
+    plots[[chr]] <- p
   }
+  
+  # Return the plots (invisibly) so users can save or modify them
+  invisible(plots)
 }

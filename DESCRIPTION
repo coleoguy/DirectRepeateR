@@ -1,7 +1,7 @@
 Package: DirectRepeateR
 Type: Package
 Title: Annotate Direct Repeats in Genome Assemblies
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person("Megan",  "Copeland", role = c("aut"), email = "mcc146@tamu.edu"),
     person("Andres", "Barboza",  role = c("aut"), email = "andresdbp@tamu.edu"),
@@ -11,15 +11,16 @@ Description: DirectRepeateR is a package for identifying and visualizing direct 
  prior information, requiring only a genome assembly in FASTA format. It outputs detailed
  locations of these repeats within the genome and provides tools for visualizing repeat
  density across chromosomes, facilitating the analysis of genomic repeat patterns.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Imports:
    Rcpp,
    data.table,
    ggplot2
 Suggests:
    knitr,
-   rmarkdown
+   rmarkdown,
+   testthat (>= 3.0.0)
+Config/testthat/edition: 3
 VignetteBuilder: knitr
 LinkingTo: Rcpp

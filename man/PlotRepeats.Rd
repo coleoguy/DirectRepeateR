@@ -1,14 +1,15 @@
 \name{PlotRepeats}
 \alias{PlotRepeats}
-\title{Visualization of Rolling-Average Repeat Counts Across Chromosomes}
+\title{Visualization of Repeat Counts Across Chromosomes}
 \description{
   The \code{PlotRepeats} function visualizes the distribution of direct 
   repeats across chromosomes by generating line plots 
-  showing the  number of repeats within specified windows across 
-  the length of each chromosome. This fucntion is designed to work with the merged data output from the GetRepeats function.
+  showing the number of repeats within specified windows across 
+  the length of each chromosome. This function is designed to work with 
+  the merged data output from the \code{GetRepeats} function.
 }
 \usage{
-PlotRepeats(merged_csv, window_size = 200000, step_size = 200000)
+PlotRepeats(data, window_size = 200000, step_size = 200000)
 }
 \arguments{
   \item{data}{
@@ -26,9 +27,10 @@ PlotRepeats(merged_csv, window_size = 200000, step_size = 200000)
   }
 }
 \value{
-  This function does not return an object. Instead, it produces one plot 
-  per chromosome, each showing repeat count in windows across 
-  the chromosome's length.
+  Invisibly returns a named list of \pkg{ggplot2} plot objects, one per 
+  chromosome, so they can be saved or modified. The plots are also 
+  printed, one per chromosome, showing repeat counts in windows across 
+  each chromosome's length.
 }
 \author{
   Megan Copeland, Heath Blackmon
@@ -39,7 +41,7 @@ PlotRepeats(merged_csv, window_size = 200000, step_size = 200000)
 \examples{
 # The following code is an example, commented out to prevent execution:
 # final_output <- GetRepeats(some_genome_data)
-# PlotRepeats(data = merged_csv, window_size = 200000, step_size = 200000)
+# plots <- PlotRepeats(data = final_output, window_size = 200000, step_size = 200000)
 }
 
 \keyword{visualization}

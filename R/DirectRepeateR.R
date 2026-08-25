@@ -2,7 +2,8 @@
 #'
 #' This function:
 #'   1. Calls a C++ routine to search for direct repeats in a FASTA file,
-#'      always storing per-chromosome CSVs in "chromosome_results".
+#'      storing per-chromosome CSVs in an intermediate directory
+#'      (a unique temporary directory by default).
 #'   2. Merges those "_condensed.csv" files into one table.
 #'   3. Filters out repeats below a specified minimum length.
 #'   4. By default, saves the merged results to "merged_results.csv"
@@ -11,18 +12,30 @@
 #' @param file         Path to the input FASTA file.
 #' @param query_length Size of the chunks used for searching. Default is 25.
 #' @param maxdist      Maximum distance beyond each chunk to search. Default is 20000.
-#' @param minlength    Minimum repeat length to retain in the final table. Default is 25.
+#' @param minlength    Minimum repeat length to retain in the final table. Default is 50.
 #' @param merged_csv   A path/filename for the merged CSV. Defaults to 
 #'   `"merged_results.csv"` in the working directory. If \code{NULL}, 
 #'   no merged file is written.
+#' @param outdir       Directory for the intermediate per-chromosome CSV
+#'   files. Defaults to a unique temporary directory so results can never
+#'   be contaminated by files left over from previous runs. If you supply
+#'   a persistent directory, any pre-existing "_condensed.csv" files in it
+#'   are deleted before the run.
 #'
 #' @return A `data.table` with columns:
 #'   \itemize{
+#'     \item Chromosome
 #'     \item Start
 #'     \item End
 #'     \item Match_Start
 #'     \item Match_End
 #'   }
+#'
+#' @details
+#' Tandem (periodic) repeats whose period is shorter than
+#' \code{query_length} are reported as multiple overlapping fragments
+#' rather than one merged interval; overlapping rows in the output can be
+#' merged post hoc if a single interval per array is desired.
 #'
 #' @export
 #'
@@ -41,17 +54,27 @@ GetRepeats <- function(file,
                        query_length = 25,
                        maxdist      = 20000,
                        minlength    = 50,
-                       merged_csv   = "merged_results.csv") {
+                       merged_csv   = "merged_results.csv",
+                       outdir       = tempfile("chromosome_results_")) {
+  
+  # Defensively remove any stale per-chromosome files from a previous run
+  # so they cannot be merged into the new results.
+  if (dir.exists(outdir)) {
+    stale <- list.files(outdir, pattern = "_condensed\\.csv$", full.names = TRUE)
+    if (length(stale) > 0) {
+      unlink(stale)
+    }
+  }
   
   # 1) Calls the C++ routine, which writes per-chromosome CSV files
   run_combined_cpp(
     fasta_path   = file,  # Use file argument instead of hardcoding
     query_length = query_length,
-    maxdist      = maxdist
+    maxdist      = maxdist,
+    outdir       = outdir
   )
   
-  # 2) Collect the new "_condensed.csv" files from "chromosome_results"
-  outdir <- "chromosome_results"
+  # 2) Collect the new "_condensed.csv" files from the intermediate dir
   condensed_files <- list.files(
     path       = outdir,
     pattern    = "_condensed\\.csv$",

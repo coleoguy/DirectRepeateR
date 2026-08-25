@@ -1,0 +1,8 @@
+^\.Rhistory$
+^\.DS_Store$
+^vignettes/\.DS_Store$
+^vignettes/chromosome_results$
+^vignettes/results$
+^vignettes/C_elegans_results\.csv$
+^vignettes/DirectRepeateR_Tutorial\.html$
+^vignettes/DirectRepeateR_Tutorial\.pdf$
